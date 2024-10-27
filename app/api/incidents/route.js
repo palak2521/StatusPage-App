@@ -43,7 +43,9 @@ export async function GET() {
         },
         orderBy: {
           createdAt: 'desc'  // Get newest incidents first
-        }
+        },
+        
+
       })
       console.log(incidents);
       // Transform the data to match your frontend format

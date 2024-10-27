@@ -35,14 +35,15 @@ export async function POST(req: Request) {
         password: hashedPassword,
       },
     });
-
+    console.log(user)
     return NextResponse.json(
       { message: "User created successfully" },
       { status: 201 }
     );
   } catch (error) {
+
     return NextResponse.json(
-      { error: "Error creating user" },
+      { error: error },
       { status: 500 }
     );
   }

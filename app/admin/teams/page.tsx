@@ -13,8 +13,7 @@ import {
   Bell,
   BarChart,
   Users,
-  Settings,
-  Link
+  Settings
 } from 'lucide-react';
 import {
   Dialog,

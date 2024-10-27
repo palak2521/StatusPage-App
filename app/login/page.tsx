@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,6 +52,7 @@ export default function LoginPage() {
   
       router.refresh();  // Optionally refresh the page
     } catch (error) {
+      console.log(error);
       setError("An error occurred during sign in");
     } finally {
       setIsLoading(false);

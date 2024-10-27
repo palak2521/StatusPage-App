@@ -83,7 +83,6 @@ const updateIncidentStatus = async (id, status) => {
 export default function IncidentManagement() {
   const [incidents, setIncidents] = useState(mockIncidents)
   const [showForm, setShowForm] = useState(false)
-  const [selectedIncident, setSelectedIncident] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
   useEffect(() => {

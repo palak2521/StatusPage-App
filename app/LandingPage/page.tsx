@@ -10,7 +10,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LandingPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -20,7 +19,6 @@ export default function LandingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
   
     try {
       const response = await fetch('/api/login', {
@@ -37,7 +35,7 @@ export default function LandingPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        setError(data.error || "An error occurred");
+        
         setIsLoading(false);
         return;
       }
@@ -50,7 +48,7 @@ export default function LandingPage() {
   
       router.refresh();
     } catch (error) {
-      setError("An error occurred during sign in");
+     console.log(error);
     } finally {
       setIsLoading(false);
     }
