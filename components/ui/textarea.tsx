@@ -1,7 +1,6 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { Type } from "lucide-react"
 
 type TextareaProps=React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 

@@ -31,7 +31,7 @@ function genId() {
   count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
 }
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type ActionType = "ADD_TOAST" | "UPDATE_TOAST" | "DISMISS_TOAST" | "REMOVE_TOAST"
 
 type Action =
