@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Overview
+This repository contains the source code for a Status Page application built using Next.js. It provides a customizable dashboard for displaying system status information, similar to those commonly used by cloud service providers.
 
-## Getting Started
+Key Features
+Built with Next.js, a popular React framework for building server-side rendered applications
+Uses Prisma for database management
+Implements a modular architecture with separate components for UI and server logic
+Supports Tailwind CSS for styling
+Includes configuration files for ESLint, PostCSS, and TypeScript
+Project Structure
+The repository is organized into several main directories:
 
-First, run the development server:
+app: Contains the main application files
+components/ui: Houses reusable UI components
+lib: Stores utility functions and shared logic
+prisma: Manages database schema and migrations
+server: Handles server-side operations
+github: Likely contains GitHub-specific configurations or integrations
+Getting Started
+To set up and run the project locally:
 
-```bash
+Clone the repository
+Install dependencies using npm, yarn, pnpm, or bun
+Run the development server using one of the following commands:
 npm run dev
-# or
 yarn dev
-# or
 pnpm dev
-# or
 bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open http://localhost:3000 in your browser to view the application
