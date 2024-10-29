@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 export default function LandingPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
