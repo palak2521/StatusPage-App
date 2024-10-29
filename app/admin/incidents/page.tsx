@@ -1,5 +1,5 @@
 'use client'
-
+import {  Incident, IncidentStatus } from '@/types';
 import { useState, useEffect } from 'react'
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, BarChart, Bell, CheckCircle2, Clock, Settings, Users, Plus, AlertTriangle } from 'lucide-react'
-
+interface UpdateContent {
+  content: string;
+}
 // Mock data and functions (replace with actual API calls)
 const mockIncidents = [
   { id: 1, title: 'Server Outage', status: 'ongoing', service: 'API', updates: ['Initial outage reported'] },
@@ -18,7 +20,7 @@ const mockIncidents = [
 
 const mockServices = ['API', 'Website', 'Database', 'Authentication']
 
-const createIncident = async (incident) => {
+const createIncident = async (incident: Incident) => {
   try {
     const response = await fetch('/api/incidents', {
       method: 'POST',
@@ -38,7 +40,7 @@ const createIncident = async (incident) => {
     // You might want to show an error notification here
   }
 }
-const addUpdate = async (id, content) => {
+const addUpdate = async (id: number, content:string | UpdateContent ) => {
   try {
     const response = await fetch(`/api/incidents/${id}/updates`, {
       method: 'POST',
@@ -59,7 +61,7 @@ const addUpdate = async (id, content) => {
   }
 }
 
-const updateIncidentStatus = async (id, status) => {
+const updateIncidentStatus = async (id: number, status: IncidentStatus) => {
   try {
     const response = await fetch(`/api/incidents/${id}`, {
       method: 'PATCH',
@@ -84,6 +86,7 @@ export default function IncidentManagement() {
   const [incidents, setIncidents] = useState(mockIncidents)
   const [showForm, setShowForm] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
+  const [updateIdCounter, setUpdateIdCounter] = useState(1);
   const router = useRouter()
   useEffect(() => {
     setIsLoading(true);
@@ -115,7 +118,6 @@ export default function IncidentManagement() {
     ws.onopen = () => {
         console.log('Connected to WebSocket server');
     };
-
     ws.onmessage = (event) => {
       console.log("Message received:", event.data);
         const updatedIncident = JSON.parse(event.data);
@@ -131,7 +133,7 @@ export default function IncidentManagement() {
             ? { 
                 ...incident, 
                 ...updatedIncident,
-                updates: updatedIncident.updates.map(update => 
+                updates: updatedIncident.updates.map((update: string | UpdateContent) => 
                   typeof update === 'string' ? update : update.content
                 )
               } 
@@ -149,29 +151,36 @@ export default function IncidentManagement() {
 if (isLoading) {
   return <div className="flex justify-center items-center h-screen">Loading...</div>;
 }
-  const handleCreateIncident = async (event) => {
+  const handleCreateIncident = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const formData = new FormData(event.target)
+    const formData = new FormData(event.currentTarget)
     const newIncident = {
       id: incidents.length + 1,
-      title: formData.get('title'),
-      status: formData.get('type') === 'incident' ? 'ongoing' : 'scheduled',
-      service: formData.get('service'),
-      updates: [formData.get('description')],
+      title: formData.get('title') as string,
+      status: formData.get('type') === 'INCIDENT' ? 'ONGOING' as IncidentStatus : 'SCHEDULED' as IncidentStatus,
+      service: formData.get('service') as string,
+      updates: [{ 
+        id: updateIdCounter,
+        incidentId: incidents.length + 1,
+        content: formData.get('description') as string,
+        createdAt: new Date(),
+       }],
+      createdAt: new Date(), // Add createdAt
     }
     const createdIncident = await createIncident(newIncident)
     if (createdIncident) {
       setIncidents([...incidents, {
         ...createdIncident,
-        updates: createdIncident.updates.map(update => 
+        updates: createdIncident.updates.map((update: string | UpdateContent) => 
           typeof update === 'string' ? update : update.content
         )
       }])
+      setUpdateIdCounter(prev => prev + 1);
       setShowForm(false)
   }
   }
 
-  const handleAddUpdate = async (id, updateContent) => {
+  const handleAddUpdate = async (id: number, updateContent: string | UpdateContent) => {
     const addedUpdate = await addUpdate(id, updateContent)
     if (addedUpdate) {
       setIncidents(prevIncidents => prevIncidents.map(incident => {
@@ -179,7 +188,7 @@ if (isLoading) {
           return {
             ...incident,
             updates: [
-              ...incident.updates, 
+              ...incident.updates,
               typeof addedUpdate === 'string' ? addedUpdate : addedUpdate.content
             ]
           }
@@ -189,7 +198,7 @@ if (isLoading) {
     }
   }
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleStatusChange = async (id: number, newStatus: IncidentStatus) => {
     const updatedIncident = await updateIncidentStatus(id, newStatus)
     console.log(updatedIncident)
     if (updatedIncident) {
@@ -197,7 +206,7 @@ if (isLoading) {
         incident.id === id 
           ? {
               ...updatedIncident,
-              updates: updatedIncident.updates.map(update => 
+              updates: updatedIncident.updates.map((update: string | UpdateContent) => 
                 typeof update === 'string' ? update : update.content
               )
             } 
@@ -323,11 +332,12 @@ if (isLoading) {
                   ))}
                 </ul>
                 {incident.status.toUpperCase()!== 'RESOLVED' && (
-                  <form onSubmit={(e) => {
+                  <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                     e.preventDefault()
-                    const update = e.target.update.value
+                    const form = e.target as HTMLFormElement
+                    const update = (form.elements.namedItem('update') as HTMLInputElement).value
                     handleAddUpdate(incident.id, update)
-                    e.target.reset()
+                    form.reset()
                   }}>
                     <div className="flex items-center space-x-2">
                       <Input name="update" placeholder="Add an update" required />
@@ -339,7 +349,7 @@ if (isLoading) {
               <CardFooter className="flex justify-between">
                 <Select
                   value={incident.status.toUpperCase()}
-                  onValueChange={(newStatus) => handleStatusChange(incident.id, newStatus)}
+                  onValueChange={(newStatus) => handleStatusChange(incident.id, newStatus as IncidentStatus)}
                 >
                   <SelectTrigger className="w-[180px]">
                   <SelectValue>{incident.status.toUpperCase()}</SelectValue>
@@ -353,7 +363,7 @@ if (isLoading) {
                   </SelectContent>
                 </Select>
                 {incident.status.toUpperCase() !== 'RESOLVED' && (
-                  <Button onClick={() => handleStatusChange(incident.id, 'RESOLVED')}>
+                  <Button onClick={() => handleStatusChange(incident.id, "RESOLVED" as IncidentStatus)}>
                     Resolve Incident
                   </Button>
                 )}

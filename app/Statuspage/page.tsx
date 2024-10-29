@@ -1,15 +1,15 @@
 "use client";
-
+import { Service,Incident, IncidentStatus,ServiceStatus } from '@/types';
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bell, ChevronDown } from 'lucide-react';
 
 const StatusPagePreview = () => {
-  const [services, setServices] = useState([]);
-  const [incidents, setIncidents] = useState([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,8 +29,9 @@ const StatusPagePreview = () => {
 
         setServices(servicesData);
         setIncidents(incidentsData);
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        const errorMessage = (error as Error).message || "An unknown error occurred";
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -38,22 +39,24 @@ const StatusPagePreview = () => {
 
     fetchData();
   }, []);
-
-  const getStatusColor = (status) => {
+  // type ServiceStatus = 'operational' | 'degraded' | 'major';
+  const getStatusColor = (status: ServiceStatus): string => {
     const colors = {
-      'operational': 'bg-green-500',
-      'degraded': 'bg-yellow-500',
-      'major': 'bg-red-500'
+      'OPERATIONAL': 'bg-green-500',
+      'DEGRADED': 'bg-yellow-500',
+      'MAJOR': 'bg-red-500'
     };
     return colors[status] || 'bg-gray-500';
   };
 
-  const getStatusBadge = (status) => {
-    const colors = {
-      'operational': 'bg-green-100 text-green-800',
-      'degraded': 'bg-yellow-100 text-yellow-800',
-      'major': 'bg-red-100 text-red-800',
-      'investigating': 'bg-blue-100 text-blue-800'
+  const getStatusBadge = (status: ServiceStatus | IncidentStatus): string => {
+    const colors= {
+      'OPERATIONAL': 'bg-green-100 text-green-800',
+      'DEGRADED': 'bg-yellow-100 text-yellow-800',
+      'MAJOR': 'bg-red-100 text-red-800',
+      'ONGOING': 'bg-red-100 text-red-800',
+      'SCHEDULED' : 'bg-yellow-100 text-yellow-800',
+      'RESOLVED' : 'bg-green-100 text-green-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
@@ -158,7 +161,7 @@ const StatusPagePreview = () => {
                 <div key={service.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
                     <h3 className="font-medium">{service.name}</h3>
-                    <p className="text-sm text-gray-500">{service.description}</p>
+                    {/* <p className="text-sm text-gray-500">{service.description}</p> */}
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className={`w-3 h-3 rounded-full ${getStatusColor(service.status)}`} />
@@ -182,7 +185,7 @@ const StatusPagePreview = () => {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="font-medium">{incident.title}</h3>
-                      <p className="text-sm text-gray-500">{incident.createdAt}</p>
+                      <p className="text-sm text-gray-500">{incident.createdAt.toString()}</p>
                     </div>
                     <Badge className={getStatusBadge(incident.status)}>
                       {incident.status}
@@ -191,7 +194,7 @@ const StatusPagePreview = () => {
                   <div className="space-y-2">
                     {incident.updates.map((update, idx) => (
                       <div key={idx} className="text-sm">
-                       - {update}
+                       - {update.content}
                       </div>
                     ))}
                   </div>

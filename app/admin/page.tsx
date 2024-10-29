@@ -1,4 +1,5 @@
 "use client";
+import { Service,ServiceStatus } from '@/types';
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,13 +37,6 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-interface Service {
-  id: number;
-  name: string;
-  status: 'OPERATIONAL' | 'DEGRADED' | 'MAJOR';
-  uptime: number;
-  createdAt: string;
-}
 
 const AdminDashboard = () => {
   const [services, setServices] = useState<Service[]>([]);
@@ -103,7 +97,7 @@ const AdminDashboard = () => {
   };
   
     // Form handlers
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setFormData(prev => ({
         ...prev,
@@ -111,7 +105,7 @@ const AdminDashboard = () => {
       }));
     };
   
-    const handleStatusChange = (value) => {
+    const handleStatusChange = (value: ServiceStatus) => {
       setFormData(prev => ({
         ...prev,
         status: value
@@ -129,7 +123,7 @@ const AdminDashboard = () => {
       });
     };
     
-    const handleNewService = async (e) => {
+    const handleNewService = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setIsSubmitting(true);
   

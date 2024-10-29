@@ -39,7 +39,8 @@ export default function RegisterPage() {
 
       router.push("/login");
     } catch (error) {
-      setError(error.message);
+      const errorMessage = (error as Error).message || "An unknown error occurred";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
