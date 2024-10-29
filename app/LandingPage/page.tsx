@@ -20,6 +20,7 @@ export default function LandingPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null); 
   
     try {
       const response = await fetch('/api/login', {
@@ -36,7 +37,7 @@ export default function LandingPage() {
       const data = await response.json();
       
       if (!response.ok) {
-        
+        setError(data.message || 'An error occurred during login');
         setIsLoading(false);
         return;
       }
@@ -50,6 +51,7 @@ export default function LandingPage() {
       router.refresh();
     } catch (error) {
      console.log(error);
+     setError('Failed to connect to the server. Please try again.');
     } finally {
       setIsLoading(false);
     }
